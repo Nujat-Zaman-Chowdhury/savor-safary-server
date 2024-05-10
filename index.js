@@ -38,8 +38,19 @@ async function run() {
     const foodsCollection = client.db('sovorSafari').collection('foods');
     const purchasesCollection = client.db('sovorSafari').collection('purchases');
 
+    //add food
+    app.post('/add-food-item',async(req,res)=>{
+        const foodData = req.body;
+        const result = await foodsCollection.insertOne(foodData)
+        res.send(result)
+    })
 
-    
+    //get added food
+    app.get('/add-food-item',async(req,res)=>{
+        const result = await foodsCollection.find().toArray();
+        res.send(result)
+    })
+
 
 
 
