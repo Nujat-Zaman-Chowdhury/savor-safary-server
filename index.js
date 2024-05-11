@@ -60,6 +60,14 @@ async function run() {
     })
 
 
+    //post purchase item
+    app.post('/purchase-food-items',async(req,res)=>{
+      const foodData = req.body;
+      const result = await purchasesCollection.insertOne(foodData)
+      res.send(result)
+  })
+
+
 
 
 
