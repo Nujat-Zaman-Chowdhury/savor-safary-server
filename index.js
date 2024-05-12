@@ -114,13 +114,27 @@ async function run() {
   app.get('/all-foods',async(req,res)=>{
     const page = parseFloat(req.query.page) - 1;
       const size = parseFloat(req.query.size);
-    const result = await foodsCollection.find().skip(page * size).limit(size).toArray();
+      const search = req.query.search;
+      console.log(search);
+      let query = {
+        food_name:{
+          $regex: search, $options: 'i' 
+        }
+      }
+      console.log(query);
+    const result = await foodsCollection.find(query).skip(page * size).limit(size).toArray();
     res.send(result)
   })
 
   //get all foods data count from db
   app.get('/foods-count',async(req,res)=>{
-    const count = await foodsCollection.countDocuments();
+    const search = req.query.search;
+    let query = {
+      food_name:{
+        $regex:search, $options: 'i' 
+      }
+    }
+    const count = await foodsCollection.countDocuments(query);
     console.log(count);
     res.send({count})
   })
@@ -136,7 +150,7 @@ async function run() {
 
   //get user feedback
   app.get('/galleries',async(req,res)=>{
-    const result = await galleryCollection.find().toArray()
+    const result = await galleryCollection.find(query).toArray()
     res.send(result);
 
   })
