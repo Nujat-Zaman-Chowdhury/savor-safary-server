@@ -110,6 +110,21 @@ async function run() {
 
 
 
+  //get all foods for pagination
+  app.get('/all-foods',async(req,res)=>{
+    const page = parseFloat(req.query.page) - 1;
+      const size = parseFloat(req.query.size);
+    const result = await foodsCollection.find().skip(page * size).limit(size).toArray();
+    res.send(result)
+  })
+
+  //get all foods data count from db
+  app.get('/foods-count',async(req,res)=>{
+    const count = await foodsCollection.countDocuments();
+    console.log(count);
+    res.send({count})
+  })
+
 
   //gallery page 
   //post user feedback in gallery section
