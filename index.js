@@ -37,16 +37,17 @@ async function run() {
     
     const foodsCollection = client.db('sovorSafari').collection('foods');
     const purchasesCollection = client.db('sovorSafari').collection('purchases');
+    const galleryCollection = client.db('sovorSafari').collection('galleries');
 
     //add food
-    app.post('/add-food-item',async(req,res)=>{
+    app.post('/foods',async(req,res)=>{
         const foodData = req.body;
         const result = await foodsCollection.insertOne(foodData)
         res.send(result)
     })
 
     //get added food
-    app.get('/add-food-item',async(req,res)=>{
+    app.get('/foods',async(req,res)=>{
         const result = await foodsCollection.find().toArray();
         res.send(result)
     })
@@ -59,6 +60,31 @@ async function run() {
         res.send(result)
     })
 
+    //get food items by user 
+    app.get('/foods/:email',async(req,res)=>{
+      const email = req.params.email;
+      const query = {email: email}
+      const result = await foodsCollection.find(query).toArray();
+      res.send(result)
+    })
+
+    //update foodItem
+    app.put('/food/:id',async(req,res)=>{
+      const id = req.params.id;
+      console.log(id);
+      const foodData = req.body;
+      const query = {_id: new ObjectId(id)}
+      const options = {upsert:true}
+      const updateDoc = {
+        $set:{
+          ...foodData,
+        }
+      }
+      const result = await foodsCollection.updateOne(query,updateDoc,options)
+      console.log(result);
+      res.send(result)
+    })
+
 
     //post purchase item
     app.post('/purchase-food-items',async(req,res)=>{
@@ -67,8 +93,37 @@ async function run() {
       res.send(result)
   })
 
+  //get  purchased food items
+  app.get('/purchase-food-items',async(req,res)=>{
+    const result = await purchasesCollection.find().toArray();
+    res.send(result)
+  })
+
+  //get purchased food items by user
+  app.get('/purchase-food-item/:email',async(req,res)=>{
+    const email = req.params.email
+    const query = {email:email}
+    const result = await purchasesCollection.find(query).toArray();
+    res.send(result)
+  })
 
 
+
+
+  //gallery page 
+  //post user feedback in gallery section
+  app.post('/galleries',async(req,res)=>{
+    const galleryData = req.body;
+    const result = await galleryCollection.insertOne(galleryData)
+    res.send(result)
+})
+
+  //get user feedback
+  app.get('/galleries',async(req,res)=>{
+    const result = await galleryCollection.find().toArray()
+    res.send(result);
+
+  })
 
 
     // Send a ping to confirm a successful connection
