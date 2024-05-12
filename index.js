@@ -99,11 +99,12 @@ async function run() {
     res.send(result)
   })
 
-  //get purchased food items by user
-  app.get('/purchase-food-item/:email',async(req,res)=>{
-    const email = req.params.email
-    const query = {email:email}
+  //get purchased item by email
+  app.get('/purchase-food-items/:email',async(req,res)=>{
+    const email = req.params.email;
+    const query = {email: email}
     const result = await purchasesCollection.find(query).toArray();
+    console.log(result);
     res.send(result)
   })
 
