@@ -89,7 +89,19 @@ async function run() {
     //post purchase item
     app.post('/purchase-food-items',async(req,res)=>{
       const foodData = req.body;
+      const purchasedQuantity = foodData.quantity;
       const result = await purchasesCollection.insertOne(foodData)
+
+      const query = {
+        food_name: foodData.food_name
+      }
+
+      const updateDoc = {
+        $inc:{purchase_count: 1},
+        $inc:{quantity: -purchasedQuantity}
+      }
+      const updatePurchaseCount = await foodsCollection.updateOne(query,updateDoc)
+      console.log(updatePurchaseCount);
       res.send(result)
   })
 
