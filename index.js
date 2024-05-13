@@ -85,6 +85,15 @@ async function run() {
       res.send(result)
     })
 
+    //delete my added food item
+    app.delete('/food/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await foodsCollection.deleteOne(query)
+      res.send(result)
+      
+    })
+
 
     //post purchase item
     app.post('/purchase-food-items',async(req,res)=>{
