@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const jwt = require('jsonwebtoken')
+const cookieParser = require('cookie-parser')
+require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -10,14 +12,35 @@ const corsOptions = {
     origin: [
       'http://localhost:5173',
       'http://localhost:5174',
-      '',
+      'https://assignment-11-21ecc.web.app',
+      'https://assignment-11-21ecc.firebaseapp.com'
     ],
     credentials:true,
     optionsSuccessStatus:200,
 }
 app.use(cors(corsOptions))
 app.use(express.json())
+app.use(cookieParser())
 
+//verify jwt middleware
+const verifyToken = (req,res,next)=>{
+  const token = req.cookies?.token
+  if(!token){
+    return res.status(401).send({message:'Unauthorized access'})
+  }
+  if(token){
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,decoded)=>{
+      if(err){
+        return res.status(401).send({message:'Unauthorized access'})
+      }
+      console.log(decoded);
+      req.user = decoded
+      next();
+    })
+  }
+
+
+}
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.eaermrq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
