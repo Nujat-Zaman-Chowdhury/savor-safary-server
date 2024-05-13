@@ -62,6 +62,31 @@ async function run() {
     const purchasesCollection = client.db('sovorSafari').collection('purchases');
     const galleryCollection = client.db('sovorSafari').collection('galleries');
 
+    //jwt
+    app.post('/jwt',async(req,res)=>{
+      const email = req.body;
+      const token = jwt.sign(email,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'7d'})
+      res
+      .cookie('token',token,{
+        httpOnly:true,
+        secure: process.env.NODE_ENV ==='production',
+        sameSite: process.env.NODE_ENV=== 'production'? 'none': 'strict'
+      })
+      .send({success:true})
+    })
+
+    //clear token on logout
+    app.get('/logout',(req,res)=>{
+      res
+      .clearCookie('token',{
+        httpOnly:true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production'? 'none' : 'strict',
+        maxAge:0,
+      })
+      .send({success:true})
+    })
+
     //add food
     app.post('/foods',async(req,res)=>{
         const foodData = req.body;
