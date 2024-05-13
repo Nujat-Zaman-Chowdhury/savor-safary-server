@@ -122,6 +122,15 @@ async function run() {
     res.send(result)
   })
 
+  
+  //delete  purchased food items by id
+  app.delete('/purchase-food-items/:id',async(req,res)=>{
+    const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await purchasesCollection.deleteOne(query)
+      res.send(result)
+  })
+
   //get purchased item by email
   app.get('/purchase-food-items/:email',async(req,res)=>{
     const email = req.params.email;
