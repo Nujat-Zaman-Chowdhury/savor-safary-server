@@ -97,8 +97,10 @@ async function run() {
       }
 
       const updateDoc = {
-        $inc:{purchase_count: 1},
-        $inc:{quantity: -purchasedQuantity}
+        $inc: { 
+          purchase_count: 1, 
+          quantity: -purchasedQuantity 
+      }
       }
       const updatePurchaseCount = await foodsCollection.updateOne(query,updateDoc)
       console.log(updatePurchaseCount);
@@ -151,6 +153,13 @@ async function run() {
     res.send({count})
   })
 
+  //get top purchased foods
+  app.get('/top-purchased-foods',async(req,res)=>{
+    const topPurchasedFoods =await  foodsCollection.find().sort({ purchase_count: -1 }).limit(6).toArray()
+    console.log(topPurchasedFoods);
+    res.send(topPurchasedFoods)
+  })
+
 
   //gallery page 
   //post user feedback in gallery section
@@ -162,7 +171,7 @@ async function run() {
 
   //get user feedback
   app.get('/galleries',async(req,res)=>{
-    const result = await galleryCollection.find(query).toArray()
+    const result = await galleryCollection.find().toArray()
     res.send(result);
 
   })
