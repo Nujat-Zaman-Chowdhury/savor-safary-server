@@ -22,7 +22,7 @@ app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())
 
-//verify jwt middleware
+// verify jwt middleware
 const verifyToken = (req,res,next)=>{
   const token = req.cookies?.token
   if(!token){
