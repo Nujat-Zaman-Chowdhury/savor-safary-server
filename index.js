@@ -132,7 +132,7 @@ async function run() {
     //update foodItem
     app.put('/food/:id',async(req,res)=>{
       const id = req.params.id;
-      console.log(id);
+      // console.log(id);
       const foodData = req.body;
       const query = {_id: new ObjectId(id)}
       const options = {upsert:true}
@@ -142,7 +142,7 @@ async function run() {
         }
       }
       const result = await foodsCollection.updateOne(query,updateDoc,options)
-      console.log(result);
+      // console.log(result);
       res.send(result)
     })
 
@@ -174,7 +174,7 @@ async function run() {
       }
       }
       const updatePurchaseCount = await foodsCollection.updateOne(query,updateDoc)
-      console.log(updatePurchaseCount);
+      // console.log(updatePurchaseCount);
       res.send(result)
   })
 
@@ -198,7 +198,7 @@ async function run() {
     const email = req.params.email;
     const query = {email: email}
     const result = await purchasesCollection.find(query).toArray();
-    console.log(result);
+    // console.log(result);
     res.send(result)
   })
 
@@ -209,14 +209,14 @@ async function run() {
     const page = parseFloat(req.query.page) - 1;
       const size = parseFloat(req.query.size);
       const search = req.query.search;
-      console.log(search);
+      // console.log(search);
       let query = {
         food_name:{
           $regex: search, 
           $options: 'i' 
         }
       }
-      console.log(query);
+      // console.log(query);
     const result = await foodsCollection.find(query).skip(page * size).limit(size).toArray();
     res.send(result)
   })
@@ -230,14 +230,14 @@ async function run() {
       }
     }
     const count = await foodsCollection.countDocuments(query);
-    console.log(count);
+    // console.log(count);
     res.send({count})
   })
 
   //get top purchased foods
   app.get('/top-purchased-foods',async(req,res)=>{
     const topPurchasedFoods =await  foodsCollection.find().sort({ purchase_count: -1 }).limit(6).toArray()
-    console.log(topPurchasedFoods);
+    // console.log(topPurchasedFoods);
     res.send(topPurchasedFoods)
   })
 
