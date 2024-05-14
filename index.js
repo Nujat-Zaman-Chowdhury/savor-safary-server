@@ -7,7 +7,7 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-//middleware
+
 const corsOptions = {
     origin: [
       'http://localhost:5173',
@@ -61,6 +61,7 @@ async function run() {
     const foodsCollection = client.db('sovorSafari').collection('foods');
     const purchasesCollection = client.db('sovorSafari').collection('purchases');
     const galleryCollection = client.db('sovorSafari').collection('galleries');
+    const usersCollection = client.db('sovorSafari').collection('users');
 
     //jwt
     app.post('/jwt',async(req,res)=>{
@@ -87,6 +88,18 @@ async function run() {
       .send({success:true})
     })
 
+    //save users data 
+    app.post('/users',async(req,res)=>{
+      const usersData = req.body;
+      const result = await usersCollection.insertOne(usersData)
+      res.send(result);
+    })
+
+    app.get('/users',async(req,res)=>{
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    })
+
     //add food
     app.post('/foods',async(req,res)=>{
         const foodData = req.body;
@@ -109,7 +122,7 @@ async function run() {
     })
 
     //get food items by user 
-    app.get('/foods/:email',async(req,res)=>{
+    app.get('/foods/:email',verifyToken,async(req,res)=>{
       const email = req.params.email;
       const query = {email: email}
       const result = await foodsCollection.find(query).toArray();
@@ -152,6 +165,7 @@ async function run() {
       const query = {
         food_name: foodData.food_name
       }
+      
 
       const updateDoc = {
         $inc: { 
@@ -165,7 +179,7 @@ async function run() {
   })
 
   //get  purchased food items
-  app.get('/purchase-food-items',async(req,res)=>{
+  app.get('/purchase-food-items',verifyToken,async(req,res)=>{
     const result = await purchasesCollection.find().toArray();
     res.send(result)
   })
@@ -180,7 +194,7 @@ async function run() {
   })
 
   //get purchased item by email
-  app.get('/purchase-food-items/:email',async(req,res)=>{
+  app.get('/purchase-food-items/:email',verifyToken,async(req,res)=>{
     const email = req.params.email;
     const query = {email: email}
     const result = await purchasesCollection.find(query).toArray();
@@ -198,7 +212,8 @@ async function run() {
       console.log(search);
       let query = {
         food_name:{
-          $regex: search, $options: 'i' 
+          $regex: search, 
+          $options: 'i' 
         }
       }
       console.log(query);
@@ -244,8 +259,7 @@ async function run() {
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    
   } finally {
     // Ensures that the client will close when you finish/error
 
