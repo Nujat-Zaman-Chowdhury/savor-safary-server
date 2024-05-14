@@ -122,7 +122,7 @@ async function run() {
     })
 
     //get food items by user 
-    app.get('/foods/:email',verifyToken,async(req,res)=>{
+    app.get('/foods/:email',async(req,res)=>{
       const email = req.params.email;
       const query = {email: email}
       const result = await foodsCollection.find(query).toArray();
@@ -179,7 +179,7 @@ async function run() {
   })
 
   //get  purchased food items
-  app.get('/purchase-food-items',verifyToken,async(req,res)=>{
+  app.get('/purchase-food-items',async(req,res)=>{
     const result = await purchasesCollection.find().toArray();
     res.send(result)
   })
@@ -194,7 +194,7 @@ async function run() {
   })
 
   //get purchased item by email
-  app.get('/purchase-food-items/:email',verifyToken,async(req,res)=>{
+  app.get('/purchase-food-items/:email',async(req,res)=>{
     const email = req.params.email;
     const query = {email: email}
     const result = await purchasesCollection.find(query).toArray();
