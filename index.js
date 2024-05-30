@@ -209,6 +209,7 @@ async function run() {
     const page = parseFloat(req.query.page) - 1;
       const size = parseFloat(req.query.size);
       const search = req.query.search;
+      const filter = req.query.filter;
       // console.log(search);
       let query = {
         food_name:{
@@ -216,6 +217,7 @@ async function run() {
           $options: 'i' 
         }
       }
+      if(filter) query.category = filter
       // console.log(query);
     const result = await foodsCollection.find(query).skip(page * size).limit(size).toArray();
     res.send(result)
@@ -224,11 +226,13 @@ async function run() {
   //get all foods data count from db
   app.get('/foods-count',async(req,res)=>{
     const search = req.query.search;
+    const filter = req.query.filter
     let query = {
       food_name:{
         $regex:search, $options: 'i' 
       }
     }
+    if(filter) query.category= filter;
     const count = await foodsCollection.countDocuments(query);
     // console.log(count);
     res.send({count})
